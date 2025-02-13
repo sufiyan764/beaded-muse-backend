@@ -26,7 +26,7 @@ const OPTIONS = {
 let CONNECTION_URI = '';
 
 if (MONGO_USERNAME) {
-    CONNECTION_URI = `mongodb+srv://${encodeURIComponent(MONGO_USERNAME)}:${encodeURIComponent(MONGO_PASSWORD)}@${MONGO_HOST}?retryWrites=true&writeConcern=majority`;
+    CONNECTION_URI = `mongodb+srv://${encodeURIComponent(MONGO_USERNAME)}:${encodeURIComponent(MONGO_PASSWORD)}@${MONGO_HOST}/${MONGO_DBNAME}?retryWrites=true&writeConcern=majority`;
 } else {
     CONNECTION_URI = `mongodb://localhost:${MONGO_PORT}`;
 } // MONGO Connection URI

@@ -12,6 +12,44 @@ const onBoardCustomer = async (request, response, next) => {
     next()
 }
 
+
+//Creating the customer for the first time when they signup
+const createCustomer = async(request,response,next) =>{
+    const {body} = request
+    const isCustomerExist = await AuthModel.customerExists(body)
+    if (isCustomerExist.status) {
+       return response.status(400).json({
+            message: "Customer already exists"
+        })
+    }
+
+    const result = await AuthModel.onBoardCustomer(body)
+
+    if (result.status) {
+        response.status(200).json({
+            message: "Customer Created Successfully"
+        })
+    }
+    
+}
+
+
+//Login Customer
+
+const customerLogin = async(request,response,next)=>{
+    const {body} = request
+    const result = await AuthModel.login(body)
+    if (result.status) {
+        return response.status(200).json({
+            message: "Logged In"
+        })
+    }
+
+    response.status(400).json({
+        message: "Wrong inputs"
+    })
+}
+
 const checkCustomer = async (request, response, next) => {
     const { body } = request
     const result = await AuthModel.checkCustomer(body)
@@ -48,10 +86,14 @@ const login = async (request, response, next) => {
     next()
 }
 
+
+
 export const AuthController = {
     onBoardCustomer,
     createAdmin,
     login,
     checkCustomer,
-    checkAdmin
+    checkAdmin,
+    createCustomer,
+    customerLogin
 }

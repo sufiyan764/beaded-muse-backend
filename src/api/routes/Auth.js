@@ -14,6 +14,10 @@ AuthRouter.post('/login', WatchTower(AuthController.login))
 AuthRouter.post('/checkCustomer', WatchTower(AuthController.checkCustomer))
 AuthRouter.post('/checkAdmin', WatchTower(AuthController.checkAdmin))
 
+AuthRouter.post('/customerSignup', WatchTower(AuthController.createCustomer))
+
+AuthRouter.post('/customerLogin',WatchTower(AuthController.customerLogin))
+
 AuthRouter.use(sendResponse)
 
 export { AuthRouter }
