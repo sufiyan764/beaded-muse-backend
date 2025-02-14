@@ -21,23 +21,59 @@ const checkCustomer = async body => {
     return { status: true, statusCode: 200, message: "Please enter the OTP", data: { name, slug } }
 }
 
-const onBoardCustomer = async body => {
-    let { admin } = body
-    const newCustomer = await checkCustomer(body)
-    if (!newCustomer.status) return newCustomer
-    const { data: customerData } = newCustomer
-    const { name, slug } = customerData;
-    const customerInsert = { name, slug, counters: COUNTERS }
-    const customerCreated = await MONGO_MODEL.mongoInsertOne("customers", customerInsert)
-    admin.customer = customerCreated?.insertedId
-    const result = await createAdmin(admin)
-    const { status = false, data = {} } = result
-    if (status) {
-        data.admin.companyName = name
-        const token = AuthHelper.encryptToken(data.admin)
-        return { status: true, statusCode: 200, message: "Welcome", data: { token, companyName: name } }
+//checking if customer already exists in the database
+
+const customerExists = async (body)=>{
+    const {email} = body
+    const result = await MONGO_MODEL.mongoFindOne("customers", {email} )
+    if (result) {
+        return {status:true,statusCode:200,message: "User Already Exists in the database"}
     }
-    return result
+
+    return {status:false,statusCode:400,message: "User Does Not Exists in Database"}
+
+}
+
+//
+
+const onBoardCustomer = async body => {
+    let  customer = body
+    const userExists = await customerExists(customer)
+    if (userExists.status) {
+        return {status:false , statusCode:400 ,message : "User Already Exists in the database"}
+    }
+
+    customer._id = new ObjectId();
+    customer.password = await AuthHelper.hashPassword(customer.password)
+    customer.phonenumber = parseInt(customer.phonenumber)
+
+    await MONGO_MODEL.mongoInsertOne("customers",customer)
+
+    const token = AuthHelper.encryptToken(customer)
+
+    return {
+        status:true,
+        statusCode: 200,
+        message : "Customer created successfully!",
+        data: {customer, token}
+    }
+
+
+    
+}
+
+const login = async body => {
+    const {email,password} = body
+    const result =await  MONGO_MODEL.mongoFindOne("customers",{email})
+    if (result) {
+        const isValid = await AuthHelper.comparePassword(password,result.password)
+        if (isValid) {
+            const token = AuthHelper.encryptToken(result)
+            return {status:true,statusCode:200,message:"Customer exists" ,data: {customer:result, token} }
+        }else{
+            return {status:false,statusCode:400,message:"Customer Does not exists"}
+        }
+    }
 }
 
 const checkAdmin = async body => {
@@ -59,21 +95,14 @@ const createAdmin = async body => {
     return { status: true, statusCode: 200, message: "Admin created successfully!", data: { admin } }
 }
 
-const login = async body => {
-    const { mobile } = body
-    if (!mobile) return { status: false, statusCode: 400, message: "Invalid mobile number" }
-    const query = AuthConstants.adminQuery(mobile)
-    let admin = await MONGO_MODEL.mongoAggregate("admins", query)
-    if (!admin || !admin[0]) return { status: false, statusCode: 400, message: "Invalid mobile number" }
-    admin = admin[0]
-    const token = AuthHelper.encryptToken(admin)
-    return { status: true, statusCode: 200, message: "Welcome", data: { token, companyName: admin.companyName } }
-}
+
 
 export const AuthModel = {
     onBoardCustomer,
     createAdmin,
     login,
     checkCustomer,
-    checkAdmin
+    checkAdmin,
+    customerExists,
+
 }
