@@ -11,8 +11,9 @@ const { version } = packageJSON
 const { SERVICE_NAME } = SERVER_CONFIG
 
 const Routes = [
-  { path: '/auth', router: AuthRouter },
+  { path: '/auth', router: AuthRouter }
 ]
+
 Routes.init = (app) => {
   if (!app || !app.use) {
     console.error('[Error] Route Initialization Failed: App / App.use is undefined')
@@ -21,17 +22,6 @@ Routes.init = (app) => {
 
   Routes.forEach(route => app.use(route.path, route.router))
 
-  // Version Check API
-  app.get('/version', (request, response, next) => {
-    const data = { version }
-    const responseBody = new ResponseBody(200, 'Success', data)
-    response.status(responseBody.statusCode).json(responseBody)
-  })
-  // Health Check API
-  app.get('/health-check', (request, response, next) => {
-    const responseBody = new ResponseBody(200, 'Success')
-    response.status(responseBody.statusCode).json(responseBody)
-  })
   // Unknow Routes
   app.use('*', (request, response, next) => {
     const error = {
