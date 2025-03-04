@@ -19,18 +19,17 @@ const createCustomer = async(request,response,next) =>{
     const isCustomerExist = await AuthModel.customerExists(body)
 
     if (isCustomerExist.status) {
-        
-       return response.status(400).json({
-            message: "Customer already exists"
-        })
+        const responseBody = new ResponseBody(200, 'Customer Already Exists', isCustomerExist)
+        response.body = responseBody
+       return next()
     }
 
     const result = await AuthModel.onBoardCustomer(body)
 
     if (result.status) {
-        response.status(200).json({
-            message: "Customer Created Successfully"
-        })
+        const responseBody = new ResponseBody(200,'Customer Created Successfully',isCustomerExist)
+        response.body  = responseBody
+       return next()
     }
     
 }
@@ -42,14 +41,15 @@ const customerLogin = async(request,response,next)=>{
     const {body} = request
     const result = await AuthModel.login(body)
     if (result.status) {
-        return response.status(200).json({
-            message: "Logged In"
-        })
+        const responseBody = new ResponseBody(200,"Logged In", result)
+        response.body = responseBody
+      return  next()
     }
 
-    response.status(400).json({
-        message: "Wrong inputs"
-    })
+
+    const responseBody = new ResponseBody(200,"Wrong Inputs", result)
+        response.body = responseBody
+      return  next()
 }
 
 const checkCustomer = async (request, response, next) => {
