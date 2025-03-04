@@ -5,13 +5,15 @@ import { ResponseBody } from '../../lib'
 import { SERVER_CONFIG } from '../../config'
 
 import { AuthRouter } from './Auth'
+import { ProductsRouter } from './Products'
 
 const { version } = packageJSON
 
 const { SERVICE_NAME } = SERVER_CONFIG
 
 const Routes = [
-  { path: '/auth', router: AuthRouter }
+  { path: '/auth', router: AuthRouter },
+  {path: '/products',router: ProductsRouter}
 ]
 
 Routes.init = (app) => {

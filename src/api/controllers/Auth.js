@@ -17,7 +17,9 @@ const onBoardCustomer = async (request, response, next) => {
 const createCustomer = async(request,response,next) =>{
     const {body} = request
     const isCustomerExist = await AuthModel.customerExists(body)
+
     if (isCustomerExist.status) {
+        
        return response.status(400).json({
             message: "Customer already exists"
         })
