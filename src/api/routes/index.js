@@ -6,6 +6,8 @@ import { SERVER_CONFIG } from '../../config'
 
 import { AuthRouter } from './Auth'
 import { ProductsRouter } from './Products'
+import { AccountDetailsRouter } from './AccountDetails'
+import { FavouritesRouter } from './Favourites'
 
 const { version } = packageJSON
 
@@ -13,8 +15,12 @@ const { SERVICE_NAME } = SERVER_CONFIG
 
 const Routes = [
   { path: '/auth', router: AuthRouter },
-  {path: '/products',router: ProductsRouter}
+  {path: '/products',router: ProductsRouter},
+  {path:'/details',router:AccountDetailsRouter},
+  {path:'/user', router: FavouritesRouter}
 ]
+
+
 Routes.init = (app) => {
   if (!app || !app.use) {
     console.error('[Error] Route Initialization Failed: App / App.use is undefined')
