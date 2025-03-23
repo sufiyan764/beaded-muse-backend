@@ -1,6 +1,6 @@
 'use strict'
 
-import e, { request, response } from 'express'
+import { request, response } from 'express'
 import { ResponseBody } from '../../lib'
 import { FavouritesModel } from '../models/Favourites'
 
