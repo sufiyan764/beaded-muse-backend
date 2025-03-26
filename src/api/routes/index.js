@@ -6,17 +6,28 @@ import { SERVER_CONFIG } from '../../config'
 
 import { AuthRouter } from './Auth'
 import { ProductsRouter } from './Products'
-import { CategoryRouter } from './Category'
+import AccountDetailsRouter from './AccountDetails'
+import FavouritesRouter from './Favourites'
+import AddressesRouter from './Addresses'
+import CartRouter from './Cart'
+import CategoryRouter from './Category'
+
 
 const { version } = packageJSON
 
 const { SERVICE_NAME } = SERVER_CONFIG
 
 const Routes = [
-  { path: "/auth", router: AuthRouter },
-  { path: "/products", router: ProductsRouter },
-  { path: "/category", router: CategoryRouter },
+{ path: '/auth', router: AuthRouter },
+{ path: '/products', router: ProductsRouter },
+{ path: '/details', router: AccountDetailsRouter },
+{ path: '/user', router: FavouritesRouter },
+{ path: '/address', router: AddressesRouter },
+{ path: '/cart', router: CartRouter },
+{ path: '/category', router: CategoryRouter }
+
 ];
+
 
 Routes.init = (app) => {
   if (!app || !app.use) {

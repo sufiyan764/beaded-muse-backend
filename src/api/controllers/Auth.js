@@ -27,7 +27,7 @@ const createCustomer = async(request,response,next) =>{
     const result = await AuthModel.onBoardCustomer(body)
 
     if (result.status) {
-        const responseBody = new ResponseBody(200,'Customer Created Successfully',isCustomerExist)
+        const responseBody = new ResponseBody(200,'Customer Created Successfully',result)
         response.body  = responseBody
        return next()
     }
