@@ -19,7 +19,24 @@ const showFeaturedProducts = async (request,response,next) => {
   next()
 }
 
+const showProductDetails = async (request, response, next) => {
+  const { productId } = request.params
+
+  if (!productId) {
+    response.body = new ResponseBody(400, 'productId is required', {})
+    return next()
+  }
+
+  const result = await ProductsModel.retrieveProductDetailsWithCategory(productId)
+
+  response.body = new ResponseBody(result.statusCode, result.message, result.data)
+  next()
+}
+
+
+
 export const ProductsController = {
   showAllProducts,
-  showFeaturedProducts
+  showFeaturedProducts,
+  showProductDetails
 }

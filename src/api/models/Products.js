@@ -29,7 +29,42 @@ const retrieveFeaturedProducts = async ()=>{
  }
 }
 
+
+const retrieveProductDetailsWithCategory = async (productId) => {
+  const pipeline = [
+    { $match: { id: parseInt(productId) } },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'categoryId',
+        foreignField: 'id',
+        as: 'categoryInfo'
+      }
+    },
+    { $unwind: '$categoryInfo' }
+  ]
+
+  const result = await MONGO_MODEL.mongoAggregate('products', pipeline)
+
+  if (!result.length) {
+    return {
+      status: false,
+      statusCode: 404,
+      message: 'Product not found',
+      data: {}
+    }
+  }
+
+  return {
+    status: true,
+    statusCode: 200,
+    message: 'Product details retrieved',
+    data: { product: result[0] }
+  }
+}
+
 export const ProductsModel = {
     retrieveAllProducts,
-    retrieveFeaturedProducts
+    retrieveFeaturedProducts,
+    retrieveProductDetailsWithCategory
 }
