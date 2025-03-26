@@ -11,6 +11,22 @@ const showAccountDetails = async (request,response,next)=>{
     next()
 }
 
+const updateAccountDetails = async (request, response, next) => {
+  const { userId, updates } = request.body
+
+  if (!userId || !updates) {
+    response.body = new ResponseBody(400, 'userId and updates are required', {})
+    return next()
+  }
+
+  const result = await AccountDetailsModel.updateCustomerDetails({ userId, updates })
+
+  response.body = new ResponseBody(result.statusCode, result.message, result.data || {})
+  next()
+}
+
+
 export const AccountDetailsController = {
-  showAccountDetails
+  showAccountDetails,
+  updateAccountDetails
 }

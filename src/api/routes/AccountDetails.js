@@ -9,6 +9,7 @@ const { sendResponse } = SendResponse
 const AccountDetailsRouter = new Express.Router()
 
 AccountDetailsRouter.get('/userDetails',WatchTower(AccountDetailsController.showAccountDetails))
+AccountDetailsRouter.post('/update', WatchTower(AccountDetailsController.updateAccountDetails))
 
 AccountDetailsRouter.use(sendResponse)
 
