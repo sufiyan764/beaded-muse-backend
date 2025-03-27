@@ -26,15 +26,6 @@ const retrieveAllProducts = async (header, query) => {
 
   const totalCount = await MONGO_MODEL.mongoCountDocuments('products', filter)
 
-  if (!allProducts.length) {
-    return {
-      status: false,
-      statusCode: 400,
-      message: 'No products found',
-      data: {}
-    }
-  }
-
   return {
     status: true,
     statusCode: 200,
@@ -47,6 +38,7 @@ const retrieveAllProducts = async (header, query) => {
     }
   }
 }
+
 
 
 
