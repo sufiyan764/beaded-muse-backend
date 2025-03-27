@@ -4,20 +4,50 @@ import { MONGO_MODEL } from '.'
 
 import { ObjectId } from 'mongodb'
 
-const retrieveAllProducts = async (header)=>{
-  let {categoryid : categoryId} = header 
+const retrieveAllProducts = async (header, query) => {
+  let { categoryid: categoryId } = header
+  let { _start = 0, _limit = 10 } = query
+
   categoryId = parseInt(categoryId)
-  
-  const query = {...(categoryId && {categoryId})}
-  console.log(header,query)
-   const allProducts = await MONGO_MODEL.mongoFind('products', query)
-   if (allProducts.length !== 0) {
-      return {status: true, statusCode: 200, message: "Products retreived", data: {allProducts}}
-   }else{
-     return {status:false,statusCode:400,message: "No Products in Database"}
-   }
-  
+  _start = parseInt(_start)
+  _limit = parseInt(_limit)
+
+  const filter = { ...(categoryId && { categoryId }) }
+
+  const allProducts = await MONGO_MODEL.mongoFindWithSkipAndLimit(
+    'products',
+    filter,
+    {
+      projection: {},
+      skip: _start,
+      limit: _limit
+    }
+  )
+
+  const totalCount = await MONGO_MODEL.mongoCountDocuments('products', filter)
+
+  if (!allProducts.length) {
+    return {
+      status: false,
+      statusCode: 400,
+      message: 'No products found',
+      data: {}
+    }
+  }
+
+  return {
+    status: true,
+    statusCode: 200,
+    message: 'Products retrieved',
+    data: {
+      products: allProducts,
+      totalCount,
+      offset: _start,
+      limit: _limit
+    }
+  }
 }
+
 
 
 const retrieveFeaturedProducts = async ()=>{
