@@ -3,14 +3,15 @@
 import { ResponseBody } from '../../lib'
 import { ProductsModel } from '../models'
 
-const showAllProducts = async (request,response,next) => {
-  const {headers} = request
-  console.log(request)
-   const allProducts = await ProductsModel.retrieveAllProducts(headers)
-   const responseBody = new ResponseBody(200,'success',allProducts)
-   response.body = responseBody
-   next()
+const showAllProducts = async (request, response, next) => {
+  const { headers, query } = request
+
+  const result = await ProductsModel.retrieveAllProducts(headers, query)
+
+  response.body = new ResponseBody(result.statusCode, result.message, result.data || {})
+  next()
 }
+
 
 const showFeaturedProducts = async (request,response,next) => {
   const allFeaturedProducts = await ProductsModel.retrieveFeaturedProducts()
