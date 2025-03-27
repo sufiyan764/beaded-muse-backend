@@ -6,28 +6,24 @@ import { SERVER_CONFIG } from '../../config'
 
 import { AuthRouter } from './Auth'
 import { ProductsRouter } from './Products'
-import AccountDetailsRouter from './AccountDetails'
-import FavouritesRouter from './Favourites'
-import AddressesRouter from './Addresses'
-import CartRouter from './Cart'
-import CategoryRouter from './Category'
-
+import { AccountDetailsRouter } from './AccountDetails'
+import { FavouritesRouter } from './Favourites'
+import { AddressesRouter } from './Addresses'
+import { CartRouter } from './Cart'
+import { CategoryRouter } from './Category'
 
 const { version } = packageJSON
-
 const { SERVICE_NAME } = SERVER_CONFIG
 
 const Routes = [
-{ path: '/auth', router: AuthRouter },
-{ path: '/products', router: ProductsRouter },
-{ path: '/details', router: AccountDetailsRouter },
-{ path: '/user', router: FavouritesRouter },
-{ path: '/address', router: AddressesRouter },
-{ path: '/cart', router: CartRouter },
-{ path: '/category', router: CategoryRouter }
-
-];
-
+  { path: '/auth', router: AuthRouter },
+  { path: '/products', router: ProductsRouter },
+  { path: '/details', router: AccountDetailsRouter },
+  { path: '/user', router: FavouritesRouter },
+  { path: '/address', router: AddressesRouter },
+  { path: '/cart', router: CartRouter },
+  { path: '/category', router: CategoryRouter }
+]
 
 Routes.init = (app) => {
   if (!app || !app.use) {
@@ -37,7 +33,7 @@ Routes.init = (app) => {
 
   Routes.forEach(route => app.use(route.path, route.router))
 
-  // Unknow Routes
+  // Unknown Routes
   app.use('*', (request, response, next) => {
     const error = {
       statusCode: 404,
@@ -52,13 +48,12 @@ Routes.init = (app) => {
     request = (({ headers, route, body, query, params, method }) => ({ headers, route, body, query, params, method }))(request)
     request.fullUrl = fullUrl
 
-    if (!error) { return }
+    if (!error) return
 
     request.service = SERVICE_NAME
 
     if (error.statusCode) {
       response.statusMessage = error.message
-
       return response.status(error.statusCode).json(error)
     }
 
@@ -66,8 +61,6 @@ Routes.init = (app) => {
       statusCode: 500,
       message: error.toString()
     }
-
-    response.statusMessage = err.message
 
     response.statusMessage = err.message
     return response.status(err.statusCode).json(err)
