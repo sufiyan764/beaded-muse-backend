@@ -27,7 +27,7 @@ const addAddressToUser = async ({ userId, address }) => {
   )
 
   if (result.modifiedCount > 0) {
-    return { statusCode: 200, message: "Address added successfully", data: { addressId: address._id } }
+    return { statusCode: 200, message: "Address added successfully", data: { address } }
   } else {
     return { statusCode: 500, message: "Failed to add address" }
   }
@@ -35,25 +35,49 @@ const addAddressToUser = async ({ userId, address }) => {
 
 // Edit
 const updateAddress = async ({ userId, addressId, newAddress }) => {
+  const userObjectId = new ObjectId(userId)
+  const addressObjectId = new ObjectId(addressId)
+
+  // Update the specific address in the array
   const result = await MONGO_MODEL.mongoUpdateOneWithArrayFilter(
     'customers',
-    { _id: new ObjectId(userId) },
+    { _id: userObjectId },
     {
       $set: {
-        "addresses.$[addr]": { ...newAddress, _id: new ObjectId(addressId) }
+        "addresses.$[addr]": { ...newAddress, _id: addressObjectId }
       }
     },
     {
-      arrayFilters: [{ "addr._id": new ObjectId(addressId) }]
+      arrayFilters: [{ "addr._id": addressObjectId }]
     }
   )
 
-  if (result.modifiedCount > 0) {
-    return { statusCode: 200, message: "Address updated successfully", data: result }
-  } else {
-    return { statusCode: 404, message: "Address not found or not updated" }
+  // If update failed
+  if (result.modifiedCount === 0) {
+    return {
+      statusCode: 404,
+      message: "Address not found or not updated"
+    }
+  }
+
+  // Fetch updated address from DB
+  const user = await MONGO_MODEL.mongoFindOne(
+    'customers',
+    { _id: userObjectId },
+    { projection: { addresses: 1 } }
+  )
+
+  const updatedAddress = user?.addresses?.find(
+    addr => addr._id.toString() === addressObjectId.toString()
+  )
+
+  return {
+    statusCode: 200,
+    message: "Address updated successfully",
+    data: { address: updatedAddress }
   }
 }
+
 
 // Delete
 const deleteAddress = async ({ userId, addressId }) => {
