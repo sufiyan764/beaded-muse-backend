@@ -6,23 +6,27 @@ import { SERVER_CONFIG } from '../../config'
 
 import { AuthRouter } from './Auth'
 import { ProductsRouter } from './Products'
-import { AccountDetailsRouter } from './AccountDetails'
-import { FavouritesRouter } from './Favourites'
-import { AddressesRouter } from './Addresses'
-import { CartRouter } from './Cart'
+import AccountDetailsRouter from './AccountDetails'
+import FavouritesRouter from './Favourites'
+import AddressesRouter from './Addresses'
+import CartRouter from './Cart'
+import CategoryRouter from './Category'
+
 
 const { version } = packageJSON
 
 const { SERVICE_NAME } = SERVER_CONFIG
 
 const Routes = [
-  {path:'/auth', router: AuthRouter },
-  {path:'/products',router: ProductsRouter},
-  {path:'/details',router:AccountDetailsRouter},
-  {path:'/user', router: FavouritesRouter},
-  { path: '/address', router: AddressesRouter },
-  { path: '/cart', router: CartRouter }
-  ]
+{ path: '/auth', router: AuthRouter },
+{ path: '/products', router: ProductsRouter },
+{ path: '/details', router: AccountDetailsRouter },
+{ path: '/user', router: FavouritesRouter },
+{ path: '/address', router: AddressesRouter },
+{ path: '/cart', router: CartRouter },
+{ path: '/category', router: CategoryRouter }
+
+];
 
 
 Routes.init = (app) => {
@@ -33,17 +37,6 @@ Routes.init = (app) => {
 
   Routes.forEach(route => app.use(route.path, route.router))
 
-  // Version Check API
-  app.get('/version', (request, response, next) => {
-    const data = { version }
-    const responseBody = new ResponseBody(200, 'Success', data)
-    response.status(responseBody.statusCode).json(responseBody)
-  })
-  // Health Check API
-  app.get('/health-check', (request, response, next) => {
-    const responseBody = new ResponseBody(200, 'Success')
-    response.status(responseBody.statusCode).json(responseBody)
-  })
   // Unknow Routes
   app.use('*', (request, response, next) => {
     const error = {
