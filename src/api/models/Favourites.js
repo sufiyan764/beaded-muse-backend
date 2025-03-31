@@ -21,29 +21,42 @@
     }
   }
 
-  const retrieveAllFavouritesDB = async ({userId}) => {
-   const pipeline = [
-    {$match : {_id: new ObjectId(userId)}},
-    {
-      $lookup:{
-        from: "products",
-        localField: "favourites",
-        foreignField: "id",
-        as:"favouriteProducts"
+  const retrieveAllFavouritesDB = async ({ userId }) => {
+    const pipeline = [
+      { $match: { _id: new ObjectId(userId) } },
+      {
+        $lookup: {
+          from: "products",
+          localField: "favourites",
+          foreignField: "id",
+          as: "favouriteProducts"
+        }
+      }
+    ]
+  
+    const result = await MONGO_MODEL.mongoAggregate('customers', pipeline)
+  
+    if (!result.length || !result[0].favouriteProducts.length) {
+      return {
+        status: 404,
+        message: "No favourite products found",
+        data: []
       }
     }
-   ]
-
-   const result = await MONGO_MODEL.mongoAggregate('customers',pipeline)
-   console.log(result)
-   if (!result.length || !result[0].favouriteProducts.length) {
-    return { status: 404, message: "No favourite products found", data: [] }
-
-   
-   }
-
-   return { status: 200, message: "Favourite products retrieved", data: result[0].favouriteProducts };
+  
+    // ✅ Enrich each product with isFavourite: true
+    const enrichedProducts = result[0].favouriteProducts.map(product => ({
+      ...product,
+      isFavourite: true
+    }))
+  
+    return {
+      status: 200,
+      message: "Favourite products retrieved",
+      data: enrichedProducts
+    }
   }
+  
 
   const deleteFavouriteDB = async ({userId,productId})=>{
     const result = await MONGO_MODEL.mongoUpdateOne('customers',{
