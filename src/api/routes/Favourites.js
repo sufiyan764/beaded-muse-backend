@@ -11,6 +11,7 @@ const FavouritesRouter = new Express.Router()
 FavouritesRouter.post('/addFavourites', WatchTower(FavouritesController.addFavourites) )
 FavouritesRouter.post('/getFavourites',WatchTower(FavouritesController.getFavourites))
 FavouritesRouter.post('/deleteFavourites',WatchTower(FavouritesController.deleteFavourites))
+FavouritesRouter.post('/toggleFavourite', WatchTower(FavouritesController.toggleFavourite))
 
 FavouritesRouter.use(sendResponse)
 

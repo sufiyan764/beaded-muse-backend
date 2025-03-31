@@ -41,8 +41,43 @@ const deleteFavourites =  async(request,response,next) =>{
   next()
 }
 
+const toggleFavourite = async (request, response, next) => {
+  const { userId, productId } = request.body
+
+  if (!userId || !productId) {
+    response.body = new ResponseBody(400, "userId and productId are required")
+    return next()
+  }
+
+  // First check if product is already in favourites
+  const user = await MONGO_MODEL.mongoFindOne(
+    'customers',
+    { _id: new ObjectId(userId) },
+    { projection: { favourites: 1 } }
+  )
+
+  const favourites = user?.favourites || []
+
+  let result
+
+  if (favourites.includes(parseInt(productId))) {
+    // Remove it
+    result = await FavouritesModel.deleteFavouriteDB({ userId, productId })
+    result.message = "Removed from favourites"
+  } else {
+    // Add it
+    result = await FavouritesModel.addToFavouritesDB({ userId, productId })
+    result.message = "Added to favourites"
+  }
+
+  response.body = new ResponseBody(result.status || 200, result.message, result.data || {})
+  next()
+}
+
+
 export const FavouritesController = {
   addFavourites,
   getFavourites,
-  deleteFavourites
+  deleteFavourites,
+  toggleFavourite
 }
