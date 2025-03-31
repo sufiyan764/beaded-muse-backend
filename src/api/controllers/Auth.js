@@ -19,7 +19,7 @@ const createCustomer = async(request,response,next) =>{
     const isCustomerExist = await AuthModel.customerExists(body)
 
     if (isCustomerExist.status) {
-        const responseBody = new ResponseBody(200, 'Customer Already Exists', isCustomerExist)
+        const responseBody = new ResponseBody(400, 'Customer Already Exists', isCustomerExist)
         response.body = responseBody
        return next()
     }
