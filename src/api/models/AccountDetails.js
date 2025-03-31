@@ -28,8 +28,14 @@ const updateCustomerDetails = async ({ userId, updates, oldPassword }) => {
     }
   }
 
-  // Handle password update securely
-  if (updates.password) {
+  const updatePayload = { ...updates }
+
+  // REMOVE fields that shouldn't be stored
+  delete updatePayload.newPassword
+  delete updatePayload.confirmPassword
+
+  // Handle password update
+  if (updatePayload.password) {
     if (!oldPassword) {
       return {
         statusCode: 400,
@@ -46,21 +52,20 @@ const updateCustomerDetails = async ({ userId, updates, oldPassword }) => {
       }
     }
 
-    // Hash new password
-    updates.password = await AuthHelper.hashPassword(updates.password)
+    // Hash the new password
+    updatePayload.password = await AuthHelper.hashPassword(updatePayload.password)
+  } else {
+    // If password field exists but is blank — remove it
+    if (updatePayload.password === "") delete updatePayload.password
   }
 
-  const updateDoc = {
-    $set: {
-      ...updates,
-      updatedAt: new Date().toISOString()
-    }
-  }
+  // Update timestamps
+  updatePayload.updatedAt = new Date().toISOString()
 
   const result = await MONGO_MODEL.mongoUpdateOne(
     'customers',
     { _id: new ObjectId(userId) },
-    updateDoc
+    { $set: updatePayload }
   )
 
   if (result.modifiedCount > 0) {
