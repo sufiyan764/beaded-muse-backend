@@ -1,5 +1,6 @@
 "use strict";
 
+import { custom } from "joi";
 import { CommonModel, MONGO_MODEL } from ".";
 import { ObjectId } from "mongodb";
 
@@ -17,7 +18,7 @@ const processCheckout = async (body) => {
 
   const order = {
     id,
-    customerId,
+    customerId: ObjectId(customerId),
     products,
     totalAmount,
     baseAmount,
@@ -32,7 +33,7 @@ const processCheckout = async (body) => {
   const result = await MONGO_MODEL.mongoInsertOne("orders", order);
   return {
     statusCode: 200,
-    message: "Product added to cart",
+    message: "Order processed successfully",
     data: { id: "testing" },
   };
 };
@@ -56,10 +57,11 @@ const successOrder = async (body) => {
 
 const getOrders = async (body) => {
   const {
+    customerId
   } = body;
   
 
-  const result = await MONGO_MODEL.mongoFind("orders", {});
+  const result = await MONGO_MODEL.mongoFind("orders", {customerId: ObjectId(customerId)});
   return {
     statusCode: 200,
     message: "Product added to cart",
