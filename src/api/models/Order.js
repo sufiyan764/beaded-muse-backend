@@ -18,7 +18,7 @@ const processCheckout = async (body) => {
 
   const order = {
     id,
-    customerId: ObjectId(customerId),
+    customerId: customerId,
     products,
     totalAmount,
     baseAmount,
@@ -71,10 +71,13 @@ const getOrderDetails = async (body) => {
 
   let { orderId } = body;
   orderId = parseInt(orderId);
-  const result = await MONGO_MODEL.mongoFindOne("orders", {
-    customerId: ObjectId(customerId),
-    orderId,
-  });
+  const query = {
+    customerId: customerId,
+    id: orderId,
+  }
+console.log(query)
+
+  const result = await MONGO_MODEL.mongoFindOne("orders", query);
   return {
     statusCode: 200,
     message: "Order returned successfully",
