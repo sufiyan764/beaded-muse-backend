@@ -42,8 +42,22 @@ const getOrders = async (req, res, next) => {
   next();
 };
 
+const getOrderDetails = async (req, res, next) => {
+  const { body } = req;
+
+  const result = await OrderModel.getOrderDetails(body);
+
+  res.body = new ResponseBody(
+    result.statusCode,
+    result.message,
+    result.data || {}
+  );
+  next();
+};
+
 export const OrderController = {
     processCheckout,
     successOrder,
-    getOrders
+    getOrders,
+    getOrderDetails
 };

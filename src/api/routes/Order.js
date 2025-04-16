@@ -11,6 +11,7 @@ const OrderRouter = new Express.Router()
 OrderRouter.post('/', WatchTower(OrderController.processCheckout))
 OrderRouter.post('/successOrder', (OrderController.successOrder))
 OrderRouter.post('/getOrders', (OrderController.getOrders))
+OrderRouter.post('/getOrderDetail', (OrderController.getOrderDetails))
 
 OrderRouter.use(sendResponse)
 

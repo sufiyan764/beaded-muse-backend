@@ -11,7 +11,7 @@ const processCheckout = async (body) => {
     totalAmount,
     baseAmount,
     gstAmount,
-    shippingAmount
+    shippingAmount,
   } = body;
 
   const id = await CommonModel.counter("orders");
@@ -39,9 +39,7 @@ const processCheckout = async (body) => {
 };
 
 const successOrder = async (body) => {
-  const {
-    id
-  } = body;
+  const { id } = body;
 
   const result = await MONGO_MODEL.mongoFindOneAndUpdate(
     "orders",
@@ -56,12 +54,11 @@ const successOrder = async (body) => {
 };
 
 const getOrders = async (body) => {
-  const {
-    customerId
-  } = body;
-  
+  const { customerId } = body;
 
-  const result = await MONGO_MODEL.mongoFind("orders", {customerId: ObjectId(customerId)});
+  const result = await MONGO_MODEL.mongoFind("orders", {
+    customerId: ObjectId(customerId),
+  });
   return {
     statusCode: 200,
     message: "Product added to cart",
@@ -69,8 +66,25 @@ const getOrders = async (body) => {
   };
 };
 
+const getOrderDetails = async (body) => {
+  const { customerId } = body;
+
+  let { orderId } = body;
+  orderId = parseInt(orderId);
+  const result = await MONGO_MODEL.mongoFindOne("orders", {
+    customerId: ObjectId(customerId),
+    orderId,
+  });
+  return {
+    statusCode: 200,
+    message: "Order returned successfully",
+    data: result,
+  };
+};
+
 export const OrderModel = {
   processCheckout,
   successOrder,
-  getOrders
+  getOrders,
+  getOrderDetails
 };
