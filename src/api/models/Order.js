@@ -33,10 +33,42 @@ const processCheckout = async (body) => {
   return {
     statusCode: 200,
     message: "Product added to cart",
-    data: { insertedId: result.insertedId },
+    data: { id: "testing" },
   };
 };
 
-export const CheckoutModel = {
+const successOrder = async (body) => {
+  const {
+    id
+  } = body;
+
+  const result = await MONGO_MODEL.mongoFindOneAndUpdate(
+    "orders",
+    { id },
+    { status: "success" }
+  );
+  return {
+    statusCode: 200,
+    message: "Order added succesfully",
+    data: { id: "testing" },
+  };
+};
+
+const getOrders = async (body) => {
+  const {
+  } = body;
+  
+
+  const result = await MONGO_MODEL.mongoFind("orders", {});
+  return {
+    statusCode: 200,
+    message: "Product added to cart",
+    data: result,
+  };
+};
+
+export const OrderModel = {
   processCheckout,
+  successOrder,
+  getOrders
 };

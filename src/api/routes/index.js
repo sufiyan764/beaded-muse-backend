@@ -11,7 +11,7 @@ import { FavouritesRouter } from './Favourites'
 import { AddressesRouter } from './Addresses'
 import { CartRouter } from './Cart'
 import { CategoryRouter } from './Category'
-import { CheckoutRouter } from './Checkout'
+import { OrderRouter } from './Order'
 
 const { version } = packageJSON
 const { SERVICE_NAME } = SERVER_CONFIG
@@ -24,7 +24,7 @@ const Routes = [
   { path: '/address', router: AddressesRouter },
   { path: '/cart', router: CartRouter },
   { path: '/category', router: CategoryRouter },
-  { path: '/checkout', router: CheckoutRouter }
+  { path: '/order', router: OrderRouter }
 ]
 
 Routes.init = (app) => {

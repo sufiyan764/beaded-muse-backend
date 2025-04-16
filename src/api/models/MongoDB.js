@@ -24,7 +24,7 @@ const mongoFindOneAndUpdate = async (model, filter, updateDoc) => {
   else { updateDoc = { ...updateDoc, $set: { updatedAt: new Date().toISOString() } } }
   const thisCollection = mongoClientDB.collection(model)
   // this option instructs the method to create a document if no documents match the filter
-  const options = { upsert: true, returnNewDocument: true }
+  const options = { upsert: false, returnNewDocument: true }
   return await thisCollection.findOneAndUpdate(filter, updateDoc, options)
 }
 
