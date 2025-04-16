@@ -57,7 +57,7 @@ const getOrders = async (body) => {
   const { customerId } = body;
 
   const result = await MONGO_MODEL.mongoFind("orders", {
-    customerId: ObjectId(customerId),
+    customerId: customerId,
   });
   return {
     statusCode: 200,
