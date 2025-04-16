@@ -34,7 +34,7 @@ const processCheckout = async (body) => {
   return {
     statusCode: 200,
     message: "Order processed successfully",
-    data: { id: "testing" },
+    data: { id },
   };
 };
 
