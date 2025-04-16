@@ -2,14 +2,13 @@
 
 import { MONGO_MODEL } from '.'
 
-const counter = async ({customer, counter}) => {
-  const sequenceCount = await MONGO_MODEL.mongoFindOneAndUpdate('customers', { _id: customer }, {
+const counter = async (counterName) => {
+  const sequenceCount = await MONGO_MODEL.mongoFindOneAndUpdate('counters', {id: 1}, {
     $inc: {
-      [`counters.${counter}`]: 1
+      [counterName]: 1
     }
   });
-  
-  return sequenceCount?.value?.counters[counter] || 1
+  return sequenceCount?.value[counterName] || 1
 }
 
 const getAdminName = async (_id) => {
