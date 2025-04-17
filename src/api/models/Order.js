@@ -3,6 +3,7 @@
 import { custom } from "joi";
 import { CommonModel, MONGO_MODEL } from ".";
 import { ObjectId } from "mongodb";
+import { OrderConstants } from "../constants";
 
 const processCheckout = async (body) => {
   const {
@@ -61,7 +62,7 @@ const getOrders = async (body) => {
   });
   return {
     statusCode: 200,
-    message: "Product added to cart",
+    message: "All orders retreived",
     data: result,
   };
 };
@@ -71,16 +72,19 @@ const getOrderDetails = async (body) => {
 
   let { orderId } = body;
   orderId = parseInt(orderId);
+
   const query = {
     customerId: customerId,
     id: orderId,
   }
-console.log(query)
 
-  const result = await MONGO_MODEL.mongoFindOne("orders", query);
+  const aggregateQuery = OrderConstants.orderDetailsQuery(query)
+
+  let result = await MONGO_MODEL.mongoAggregate("orders", aggregateQuery);
+  result = result?.[0] || {}
   return {
     statusCode: 200,
-    message: "Order returned successfully",
+    message: "Order details retrieved",
     data: result,
   };
 };
