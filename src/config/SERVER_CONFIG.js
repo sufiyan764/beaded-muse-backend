@@ -5,7 +5,7 @@ const env = {
     CORS_METHODS: "GET,PUT,PATCH,POST,DELETE",
     CORS_ORIGIN: "*",
     NODE_ENV: "dev",
-    PORT: "4000",
+    PORT: "3000",
     PARAMETER_LIMIT: "1000",
     SERVICE_NAME: "Test",
     VERSION: "1.0.0",
